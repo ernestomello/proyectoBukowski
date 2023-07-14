@@ -1,8 +1,29 @@
 .contador_abajo{
-     color:blue
+     color:blue;
+     float: left;
+     font-family: 'Arial', Helvetica, sans-serif;
 
 }
 .contador_abajo_pasa{
     color:green;
     font-weight: bold;
+    float: left;
+}
+#tiempo_restante{
+    color: brown;
+    float:right;
+}
+textarea{
+    padding: 4px;
+    border: 0;
+    width: 100%;
+    height: 100%;
+    height: unset;
+    /*width:fit-content;*/
+    justify-content: center;
+    flex-basis:0%;
+    border-bottom: 5pc;
+}
+title{
+    background-color: brown;
 }
