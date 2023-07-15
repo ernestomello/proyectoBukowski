@@ -13,17 +13,14 @@
     color: brown;
     float:right;
 }
-textarea{
-    padding: 4px;
-    border: 0;
-    width: 100%;
-    height: 100%;
-    height: unset;
-    /*width:fit-content;*/
-    justify-content: center;
-    flex-basis:0%;
-    border-bottom: 5pc;
+#cabezal{
+    float:inline-end;
 }
-title{
-    background-color: brown;
+
+textarea{
+    padding: 0px;
+    border: none;
+    width: 100%;
+    height: 240px;
+    resize: none;
 }

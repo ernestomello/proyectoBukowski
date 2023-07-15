@@ -8,25 +8,29 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h1>Bukowski</h1>
-    <img src="images/bukowski-readings-2194053355.png" alt="El veterano" width="20%"  >
-    <input type="text" style="border:0ch" value="Lunes, 15 de Abril " placeholder="Ingrese un titulo para su dia" name="" id="titulo_dia">
+    <div id="cabezal">
+      <h1>Bukowski
+        <img src="images/bukowski-readings-2194053355.png" alt="El veterano" width="10%"  >
+      </h1>
+    </div>
+    <div id="titulo">
+      <input id="titulo_dia" type="text" style="border:0ch" value="" placeholder="Ingrese un titulo para su dia">
+    </div>
+    
     <div>
       <table id="tabla_dias">
         <tbody>
-          <tr></tr>
         </tbody>
         
       
       </table>
     </div>
-    <div>
-      <form action="script.js" method="post"></form>
-     
-      <textarea rows="10" id="texto"></textarea>
-      <div id="contador" class="contador_abajo"></div>
-      <div id="tiempo_restante"></div>
-   </div>
+    <div id="textarea">
+    </div>
+    
+    <div id="contador" class="contador_abajo"></div>
+    <div id="tiempo_restante"></div>
+   
    <script type="text/javascript" src="script.js"></script>
   </body>
 </html>
