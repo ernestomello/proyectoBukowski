@@ -4,6 +4,7 @@
     titulo:""
 } */
 const cant_palabras = 30;
+
 function cargar_tabla(decla = new Date())
 {
     let tabla = document.getElementById("tabla_dias");  
@@ -55,14 +56,18 @@ function cargar_tabla(decla = new Date())
                 for (let i = 0; i < largo; i++)
                 {
                     if (registro[i].fecha == dia.toLocaleDateString()){
-                        if (contarPalabras(registro[i].contenido) >= cant_palabras )
+                        let contadas = contarPalabras(registro[i].contenido);
+                        if (contadas >= cant_palabras )
                         {
                             newImage.setAttribute('src','images/2-points.png');  
                             pasa = 1;
                         }
-                        else
+                        else if ( contadas != 0)
                         {
                             newImage.setAttribute('src','images/1-point.png');
+                            pasa = 1;
+                        }else{
+                            newImage.setAttribute('src','images/no-points.png');
                             pasa = 1;
                         }
                     }                    
@@ -166,8 +171,11 @@ return null
 }
 function contarPalabras(texto) 
 {
-    let words  = texto.trimEnd().split(' ');
-    return words.length
+    let words  = texto.trimEnd().replaceAll('\n',' ').split(' ');
+    if (words[0] == ""){
+        return 0
+    }else
+        return words.length
 }
 function mostrarPalabras()
 {
@@ -194,11 +202,8 @@ function mostrarPalabras()
         num.className = "contador_abajo_pasa";
     else    
         num.className = "contador_abajo";
-    
-    if (words == 0)
-        num.innerText = ""
-    else
-        num.innerText = words + ' Palabras';
+      
+    num.innerText = words + ' Palabras';
 }
 function tiempo_restante()
 {
@@ -228,6 +233,7 @@ function guardar()
     let key = ini.toLocaleDateString();
     let texto = document.getElementById(key);
     let titulo = document.getElementById('titulo_dia');
+    let dia_actual = new Date(localStorage.getItem("dia_actual"));
     if (texto == null)
         return;
     else
@@ -271,6 +277,7 @@ function guardar()
         //alert("No se guaro"+key)
     }
     document.getElementById('guardado').style = 'display: block';
+    cargar_tabla(dia_actual);
 }
 
 
