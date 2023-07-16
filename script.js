@@ -84,7 +84,7 @@ function cargar_tabla(decla = new Date())
         newCell.appendChild(newImage);        
     
     }
-    if (mes_siguiente.getMonth() <= hoy.getMonth()){
+    if (mes_siguiente <= hoy){
         let newCell = newRow.insertCell();
         let newImage = document.createElement('img');
         newImage.setAttribute('src','images/adelante.png');
