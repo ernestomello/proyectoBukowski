@@ -12,14 +12,27 @@ function cargar_tabla(decla = new Date())
         tabla.removeChild(tabla.firstChild);
     } 
     let newRow = tabla.insertRow(-1);
-    let hoy = decla;
-    let primer_dia = new Date(hoy.getFullYear(),hoy.getMonth(),"01");
-    let ultimo = new Date(hoy.getFullYear(),hoy.getMonth()+1,0)
+    let hoy = new Date();
+    let primer_dia = new Date(decla.getFullYear(),decla.getMonth(),"01");
+    let ultimo_dia = new Date(decla.getFullYear(),decla.getMonth()+1,0);
+    let mes_anterior = new Date(decla.getFullYear(),decla.getMonth()-1,1);
+    let mes_siguiente = new Date(decla.getFullYear(),decla.getMonth()+1,1);
+
     let user = localStorage.getItem('usuario')
 
+    let newCell = newRow.insertCell();
     
+    let newImage = document.createElement('img');
+    newImage.setAttribute('src','images/atras.png');
+    newImage.setAttribute('title',mes_anterior.toLocaleDateString());
+    newImage.setAttribute('id',"mes_ant");
+    newImage.addEventListener("click", function(){
+        cargar_tabla(mes_anterior);
+        cargar_texto(mes_anterior);
+    })
+    newCell.appendChild(newImage);        
     
-    for (let i = 0; i < ultimo.getDate(); i++)
+    for (let i = 0; i < ultimo_dia.getDate(); i++)
     {
         // Inserta una celda en la fila
         let newCell = newRow.insertCell();
@@ -71,6 +84,18 @@ function cargar_tabla(decla = new Date())
         newCell.appendChild(newImage);        
     
     }
+    if (mes_siguiente.getMonth() <= hoy.getMonth()){
+        let newCell = newRow.insertCell();
+        let newImage = document.createElement('img');
+        newImage.setAttribute('src','images/adelante.png');
+        newImage.setAttribute('title',mes_siguiente.toLocaleDateString());
+        newImage.setAttribute('id',"mes_ant");
+        newImage.addEventListener("click", function(){
+            cargar_tabla(mes_siguiente);
+            cargar_texto(mes_siguiente);
+        })
+        newCell.appendChild(newImage); 
+    }
 }
 
 function cargar_texto(id_texto = new Date())
@@ -104,17 +129,19 @@ function cargar_texto(id_texto = new Date())
     else{
         newText = document.createElement('p');
         newText.setAttribute('id',key);
-        newText.innerText ='No tiene Anotaciones este día :(';
+        newText.innerHTML ='No tiene Anotaciones el día '+key+' :( <br> Pero no te pongas mal ;) <br> <b> Hoy puede ser un gran día !!!</b>' ;
+        document.getElementById('titulo_dia').value ="";
         textarea.appendChild(newText);
     }
     
     if (localStorage.getItem(user) != null){
         let inf = buscarFecha(localStorage.getItem(user),key);
         
-        if (inf != null)
-            newText.innerText = inf;
-        //falta cargar el titulo..que no se como
-        //newText.innerText = localStorage.getItem(key);
+        if (inf != null){ 
+            newText.innerText = inf.contenido;
+            document.getElementById('titulo_dia').value = inf.titulo;
+        }
+        
     }
 
 }
@@ -128,7 +155,7 @@ function buscarFecha(jsonData,fecha)
     {
         if (datos[i].fecha == fecha)
         {
-            return datos[i].contenido;
+            return datos[i];
         }
     } 
 return null
@@ -195,6 +222,7 @@ function guardar()
     let ini = new Date();
     let key = ini.toLocaleDateString();
     let texto = document.getElementById(key);
+    let titulo = document.getElementById('titulo_dia');
     if (texto == null)
         return;
     else
@@ -212,6 +240,7 @@ function guardar()
             if (registros[i].fecha == key)
             {
                 registros[i].contenido = texto;
+                registros[i].titulo = titulo.value;
                 pasa = 1;
             }
             //alert("se guardo "+ini.toLocaleDateString())
@@ -221,7 +250,7 @@ function guardar()
             let regObj = {
                 fecha: key,
                 contenido: texto,
-                titulo: ""
+                titulo: titulo.value
             };
             registros.push(regObj);
         }
