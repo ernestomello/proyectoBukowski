@@ -1,9 +1,9 @@
-var estructura ={
+/* var estructura ={
     fecha: "",
     contenido: "",
     titulo:""
-}
-
+} */
+const cant_palabras = 30;
 function cargar_tabla(decla = new Date())
 {
     let tabla = document.getElementById("tabla_dias");  
@@ -55,7 +55,7 @@ function cargar_tabla(decla = new Date())
                 for (let i = 0; i < largo; i++)
                 {
                     if (registro[i].fecha == dia.toLocaleDateString()){
-                        if (contarPalabras(registro[i].contenido) > 15 )
+                        if (contarPalabras(registro[i].contenido) >= cant_palabras )
                         {
                             newImage.setAttribute('src','images/2-points.png');  
                             pasa = 1;
@@ -186,7 +186,7 @@ function mostrarPalabras()
     
     let num   = document.getElementById("contador");
        
-    if (words > 20)
+    if (words > cant_palabras)
         num.className = "contador_abajo_pasa";
     else    
         num.className = "contador_abajo";
@@ -195,7 +195,6 @@ function mostrarPalabras()
         num.innerText = ""
     else
         num.innerText = words + ' Palabras';
-    
 }
 function tiempo_restante()
 {
@@ -215,7 +214,9 @@ function tiempo_restante()
         ("0" + segundos).substring(0,2)
     ].join(":");
     tiempo_restant.innerText = 'Quedan '+ resultado +' hs.';
+    document.getElementById('guardado').style = 'display: none';
 }
+
 
 function guardar()
 {
@@ -243,7 +244,6 @@ function guardar()
                 registros[i].titulo = titulo.value;
                 pasa = 1;
             }
-            //alert("se guardo "+ini.toLocaleDateString())
         }
         if (pasa != 1)
         {
@@ -255,6 +255,7 @@ function guardar()
             registros.push(regObj);
         }
         localStorage.setItem(user,JSON.stringify(registros));
+        
     }else{
         let regObj = {
             fecha: key,
@@ -265,9 +266,12 @@ function guardar()
         localStorage.setItem(user,JSON.stringify(arrObj));
         //alert("No se guaro"+key)
     }
+    document.getElementById('guardado').style = 'display: block';
 }
+
+
 setInterval(mostrarPalabras, 1000);
-setInterval(tiempo_restante, 3000);
+setInterval(tiempo_restante, 20000);
 setInterval(guardar, 30000);
 let dia_actual = new Date(localStorage.getItem("dia_actual"));
 let usuario_logueado = localStorage.getItem("usuario");
@@ -278,7 +282,13 @@ const ul = document.querySelectorAll('.user');
 
 ul.forEach(ul => ul.addEventListener('click', event =>{
     //alert(event.target.getAttribute('alt'));
-    localStorage.setItem('usuario',event.target.getAttribute('alt'));
+    let alt = event.target.getAttribute('alt');
+    let src = event.target.getAttribute('src');
+    let clas = event.target.getAttribute('class');
+    
+    localStorage.setItem('usuario',alt);
+    let img = "<img class="+clas+" src="+src+" alt="+alt+" width='20%'> Activo";
+    document.getElementById('usuario').innerHTML = img;
     cargar_tabla();
     cargar_texto(dia_actual);
 }))
