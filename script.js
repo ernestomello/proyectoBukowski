@@ -123,6 +123,8 @@ function cargar_texto(id_texto = new Date())
         //creo un textarea para permitir ingresar texto
         newText = document.createElement('textarea');
         newText.setAttribute('id',key);
+        document.getElementById('titulo_dia').removeAttribute('readonly');
+        document.getElementById('titulo_dia').setAttribute('placeholder','Ingrese un titulo para su dia');
         textarea.appendChild(newText);
         
     }
@@ -131,6 +133,8 @@ function cargar_texto(id_texto = new Date())
         newText.setAttribute('id',key);
         newText.innerHTML ='No tiene Anotaciones el día '+key+' :( <br> Pero no te pongas mal ;) <br> <b> Hoy puede ser un gran día !!!</b>' ;
         document.getElementById('titulo_dia').value ="";
+        document.getElementById('titulo_dia').setAttribute('placeholder','No tine titulo ingresado');
+        document.getElementById('titulo_dia').setAttribute('readonly','true');
         textarea.appendChild(newText);
     }
     

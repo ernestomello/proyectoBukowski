@@ -5,7 +5,10 @@ body{
   width: 30%;
   
 }
-
+#titulo_dia{
+  font-size:larger;
+  width: 600px;
+}
 .logueado{
   width: 200px;
   margin-right: 40px;
@@ -48,6 +51,7 @@ textarea{
     height: 240px;
     resize: none;
     margin-bottom: 20px;
+    background-color:rgb(241, 238, 238);
 }
 
 .flecha{
@@ -133,3 +137,6 @@ ul {
   align-items: start;
 }
   
+input:read-only{
+    background-color: rgb(238, 229, 153);
+}
