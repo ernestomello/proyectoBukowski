@@ -1,10 +1,18 @@
-function cargar_tabla()
+var estructura ={
+    fecha: "",
+    contenido: "",
+    titulo:""
+}
+
+function cargar_tabla(decla = new Date())
 {
     let tabla = document.getElementById("tabla_dias");   
     let newRow = tabla.insertRow(-1);
-    let hoy = new Date();
+    let hoy = decla;
     let primer_dia = new Date(hoy.getFullYear(),hoy.getMonth(),"01");
     let ultimo = new Date(hoy.getFullYear(),hoy.getMonth()+1,0)
+    let user = localStorage.getItem('usuario')
+    
     for (let i = 0; i < ultimo.getDate(); i++)
     {
         // Inserta una celda en la fila
@@ -19,13 +27,31 @@ function cargar_tabla()
         let newImage = document.createElement('img');
         // en caso de que haya registro en localStorage del día que se está cargando se pone otra imagen
         if (dia < hoy){
-            let registro = localStorage.getItem(dia.toLocaleDateString())
+            let registro = JSON.parse(localStorage.getItem(user))
+            
             if (registro){
+                let largo = registro.length;
+                let pasa = 0;
+                
+                for (let i = 0; i < largo; i++)
+                {
+                    if (registro[i].fecha == dia.toLocaleDateString()){
+                        if (contarPalabras(registro[i].contenido) > 15 )
+                        {
+                            newImage.setAttribute('src','images/2-points.png');  
+                            pasa = 1;
+                        }
+                        else
+                        {
+                            newImage.setAttribute('src','images/1-point.png');
+                            pasa = 1;
+                        }
+                    }                    
+                }
+                if (pasa == 0)
+                    newImage.setAttribute('src','images/no-points.png');
                 //hay que evaluar la cantida de palabras que se guardaron para mostrar: 1-ponit.png /2-ponints.png#HECHO
-                if (contarPalabras(registro) > 15 )
-                    newImage.setAttribute('src','images/2-points.png');  
-                else
-                    newImage.setAttribute('src','images/1-point.png');
+               
             }
             else{
             newImage.setAttribute('src','images/no-points.png');
@@ -35,19 +61,22 @@ function cargar_tabla()
 
         newImage.setAttribute('title',dia.toLocaleDateString());
         newImage.setAttribute('id',i);
-        newImage.addEventListener("click", function(){cargar_texto(dia.toLocaleDateString())})
+        newImage.addEventListener("click", function(){cargar_texto(dia)})
         newCell.appendChild(newImage);        
     
     }
 }
 
-function cargar_texto(id_texto)
+function cargar_texto(id_texto = new Date())
 {
     let textarea = document.getElementById('textarea');
     let parr = document.getElementsByTagName('p');
     let tarea = document.getElementsByTagName('textarea');
     let hoy = new Date();
+    let key =id_texto.toLocaleDateString();
     let newText;
+    let user = localStorage.getItem('usuario');
+    localStorage.setItem('dia_actual',id_texto);
     
     if (parr.length != 0){
         let p = document.getElementById(parr[0].id)
@@ -59,24 +88,44 @@ function cargar_texto(id_texto)
     }
     
     
-    if ( hoy.toLocaleDateString() == id_texto){
+    if ( hoy.toLocaleDateString() == key){
         //creo un textarea para permitir ingresar texto
         newText = document.createElement('textarea');
-        newText.setAttribute('id',id_texto);
+        newText.setAttribute('id',key);
         textarea.appendChild(newText);
         
     }
     else{
         newText = document.createElement('p');
-        newText.setAttribute('id',id_texto);
+        newText.setAttribute('id',key);
         newText.innerText ='No tiene Anotaciones este día :(';
         textarea.appendChild(newText);
     }
     
-    if (localStorage.getItem(id_texto)){
-        newText.innerText = localStorage.getItem(id_texto);
+    if (localStorage.getItem(user) != null){
+        let inf = buscarFecha(localStorage.getItem(user),key);
+        
+        if (inf != null)
+            newText.innerText = inf;
+        //falta cargar el titulo..que no se como
+        //newText.innerText = localStorage.getItem(key);
     }
 
+}
+
+function buscarFecha(jsonData,fecha)
+{
+    let datos = JSON.parse(jsonData);
+    let largo = datos.length;
+    
+    for (let i = 0; i<largo;i++)
+    {
+        if (datos[i].fecha == fecha)
+        {
+            return datos[i].contenido;
+        }
+    } 
+return null
 }
 function contarPalabras(texto) 
 {
@@ -86,13 +135,18 @@ function contarPalabras(texto)
 function mostrarPalabras()
 {
     let texto = document.getElementsByTagName("textarea");
-    let words;
-    if (texto.length != 0){        
-        words = contarPalabras(texto[0].value);
+    let words = 0;
+    let hoy = new Date();
+
+    
+    if (texto.length != 0){    
+        if (texto[0].id == hoy.toLocaleDateString())    
+            words = contarPalabras(texto[0].value);
     }else{
         let texto = document.getElementsByTagName("p");
         if (texto.length != 0){
-            words = contarPalabras(texto.item(0).innerText);
+            if (texto[0].id == hoy.toLocaleDateString())
+                words = contarPalabras(texto.item(0).innerText);
         }
     }
     
@@ -103,7 +157,11 @@ function mostrarPalabras()
         num.className = "contador_abajo_pasa";
     else    
         num.className = "contador_abajo";
-    num.innerText = words + ' Palabras';
+    
+    if (words == 0)
+        num.innerText = ""
+    else
+        num.innerText = words + ' Palabras';
     
 }
 function tiempo_restante()
@@ -129,17 +187,65 @@ function tiempo_restante()
 function guardar()
 {
     let ini = new Date();
-    let texto = document.getElementById(ini.toLocaleDateString())
-    if (localStorage.getItem(ini.toLocaleDateString()))
+    let key = ini.toLocaleDateString();
+    let texto = document.getElementById(key);
+    if (texto == null)
+        return;
+    else
+        texto = texto.value;
+
+    let user = localStorage.getItem('usuario');
+    let registros = JSON.parse(localStorage.getItem(user));
+    let pasa = 0;
+
+    if ( registros != null)
     {
-        localStorage.setItem(ini.toLocaleDateString(),texto.value)
-        //alert("se guardo "+ini.toLocaleDateString())
+        let largo = registros.length;
+        for(let i = 0; i < largo; i++)
+        {
+            if (registros[i].fecha == key)
+            {
+                registros[i].contenido = texto;
+                pasa = 1;
+            }
+            //alert("se guardo "+ini.toLocaleDateString())
+        }
+        if (pasa != 1)
+        {
+            let regObj = {
+                fecha: key,
+                contenido: texto,
+                titulo: ""
+            };
+            registros.push(regObj);
+        }
+        localStorage.setItem(user,JSON.stringify(registros));
     }else{
-        alert("No se guaro"+ini.toLocaleDateString())
+        let regObj = {
+            fecha: key,
+            contenido: texto,
+            titulo: ""
+        };
+        let arrObj = [regObj];
+        localStorage.setItem(user,JSON.stringify(arrObj));
+        //alert("No se guaro"+key)
     }
 }
 setInterval(mostrarPalabras, 1000);
 setInterval(tiempo_restante, 3000);
 setInterval(guardar, 30000);
+let dia_actual = new Date(localStorage.getItem("dia_actual"));
 cargar_tabla();
-cargar_texto("14/7/2023");
+cargar_texto(dia_actual);
+document.getElementById("flecha").addEventListener( 'click', function() {
+    let contenedor =document.getElementById("menu_usuarios");
+    if (contenedor.style.display === "none")
+    {
+        contenedor.style.display = "block";
+        this.style.transform ="rotate(180deg)";
+    }
+    else{
+        contenedor.style.display = "none"
+        this.style.transform ="rotate(0deg)";
+    }
+ } )
