@@ -6,12 +6,18 @@ var estructura ={
 
 function cargar_tabla(decla = new Date())
 {
-    let tabla = document.getElementById("tabla_dias");   
+    let tabla = document.getElementById("tabla_dias");  
+    
+    while(tabla.firstChild){
+        tabla.removeChild(tabla.firstChild);
+    } 
     let newRow = tabla.insertRow(-1);
     let hoy = decla;
     let primer_dia = new Date(hoy.getFullYear(),hoy.getMonth(),"01");
     let ultimo = new Date(hoy.getFullYear(),hoy.getMonth()+1,0)
     let user = localStorage.getItem('usuario')
+
+    
     
     for (let i = 0; i < ultimo.getDate(); i++)
     {
@@ -235,9 +241,19 @@ setInterval(mostrarPalabras, 1000);
 setInterval(tiempo_restante, 3000);
 setInterval(guardar, 30000);
 let dia_actual = new Date(localStorage.getItem("dia_actual"));
+let usuario_logueado = localStorage.getItem("usuario");
 cargar_tabla();
 cargar_texto(dia_actual);
-document.getElementById("flecha").addEventListener( 'click', function() {
+
+const ul = document.querySelectorAll('.user');
+
+ul.forEach(ul => ul.addEventListener('click', event =>{
+    //alert(event.target.getAttribute('alt'));
+    localStorage.setItem('usuario',event.target.getAttribute('alt'));
+    cargar_tabla();
+    cargar_texto(dia_actual);
+}))
+/*document.getElementById("flecha").addEventListener( 'click', function() {
     let contenedor =document.getElementById("menu_usuarios");
     if (contenedor.style.display === "none")
     {
@@ -249,3 +265,4 @@ document.getElementById("flecha").addEventListener( 'click', function() {
         this.style.transform ="rotate(0deg)";
     }
  } )
+ */
